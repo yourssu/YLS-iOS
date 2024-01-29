@@ -33,6 +33,7 @@
 		B9278A612B680E7B00848F9B /* YLS_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLS_iOSTests.swift; sourceTree = "<group>"; };
 		B9278A6C2B68112200848F9B /* YLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLS.swift; sourceTree = "<group>"; };
 		B9278A6F2B68113B00848F9B /* YLSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLSEvent.swift; sourceTree = "<group>"; };
+		B9278A722B68121C00848F9B /* YLS-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "YLS-iOS.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 				B9278A542B680E7A00848F9B /* YLS-iOS */,
 				B9278A602B680E7B00848F9B /* YLS-iOSTests */,
 				B9278A532B680E7A00848F9B /* Products */,
+				B9278A712B68121C00848F9B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -97,6 +99,19 @@
 				B9278A6F2B68113B00848F9B /* YLSEvent.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		B9278A712B68121C00848F9B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B9278A722B68121C00848F9B /* YLS-iOS.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B9278A732B68121C00848F9B /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,6 +193,12 @@
 			mainGroup = B9278A482B680E7A00848F9B;
 			productRefGroup = B9278A532B680E7A00848F9B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B9278A732B68121C00848F9B /* Products */;
+					ProjectRef = B9278A722B68121C00848F9B /* YLS-iOS.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B9278A512B680E7A00848F9B /* YLS-iOS */,
