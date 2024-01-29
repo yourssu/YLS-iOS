@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct YLSEvent {
+    let userID: String
+    let timestamp: String
+    let event: [String: Any]
+}
