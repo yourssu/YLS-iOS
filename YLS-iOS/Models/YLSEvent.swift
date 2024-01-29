@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct YLSEvent {
+struct YLSEvent: Codable {
     let userID: String
     let timestamp: String
-    let event: [String: Any]
+    let event: [String: String]
 }
