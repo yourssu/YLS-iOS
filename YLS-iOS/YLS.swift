@@ -14,6 +14,7 @@ public final class YLS {
     public static let shared = YLS()
 
     private var url: URL?
+    private var userID: String?
 
     private init() {}
 
@@ -26,36 +27,42 @@ public final class YLS {
         self.url = url
     }
 
-    public func logEvent(userID: String, name: String, extra: [String: String]? = nil) {
-        guard let url else {
-            logger.warning("YLS is not initialized")
+    public func setUserID(of userID: String) {
+        self.userID = userID
+    }
+
+    public func logEvent(name: String, extra: [String: Any] = [:]) {
+        guard let url, let userID else {
+            logger.warning("YLS should init UserID and URL")
             return
         }
 
         Task {
             let timestamp = ISO8601DateFormatter().string(from: Date())
-            var event: [String: String] = ["platform": "iOS", "name": name]
-            if let extra {
-                event = event.merging(extra) { (current, new) in new }
-            }
-            let ylsEvent = YLSEvent(userID: userID, timestamp: timestamp, event: event)
+
+            var eventInfo: [String: Any] = ["platform": "iOS", "name": name]
+            eventInfo = eventInfo.merging(extra) { (current, new) in new }
+
+            let event: [String: Any] = ["user": userID, "timestamp": timestamp, "event": eventInfo]
 
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                let body = try JSONEncoder().encode(ylsEvent)
-                request.httpBody = body
+                let data = try JSONSerialization.data(withJSONObject: event, options: .prettyPrinted)
+                request.httpBody = data
 
                 // 테스트용 코드
                 try await Task.sleep(nanoseconds: 1_000_000_000)
-                logger.info("YLS success to log event - \(String(describing: ylsEvent))")
+                logger.info("YLS success to log event - \(String(describing: event))")
+                logger.info("YLS log data - \(data)")
 
 //                let (_, response) = try await URLSession.shared.data(for: request)
 //                if let urlResponse = response as? HTTPURLResponse {
 //                    switch urlResponse.statusCode {
 //                    case 200..<300:
-//                        logger.info("YLS success to log event - \(String(describing: ylsEvent))")
+//                        logger.info("YLS success to log event - \(String(describing: event))")
+//                        logger.info("YLS log data - \(data)")
 //                    default:
 //                        logger.warning("YLS fail to logging - \(urlResponse.statusCode)")
 //                    }
@@ -66,5 +73,13 @@ public final class YLS {
                 logger.error("YLS fail to logging - \(error)")
             }
         }
+    }
+
+    public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
+        logEvent(name: "\(name)Viewed", extra: extra)
+    }
+
+    public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
+        logEvent(name: "\(name)Tapped", extra: extra)
     }
 }
