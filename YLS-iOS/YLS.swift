@@ -28,6 +28,7 @@ public final class YLS {
     }
 
     public func setUserID(of userID: String) {
+        // 비로그인 처리 + 암호화 진행
         self.userID = userID
     }
 
@@ -40,16 +41,19 @@ public final class YLS {
         Task {
             let timestamp = ISO8601DateFormatter().string(from: Date())
 
-            var eventInfo: [String: Any] = ["platform": "iOS", "name": name]
-            eventInfo = eventInfo.merging(extra) { (current, new) in new }
+            var event: [String: Any] = ["platform": "iOS", "name": name]
+            event = event.merging(extra) { (current, new) in new }
 
-            let event: [String: Any] = ["user": userID, "timestamp": timestamp, "event": eventInfo]
+            let ylsEvent = YLSEvent(userID: userID, timestamp: timestamp, event: event)
 
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                let data = try JSONSerialization.data(withJSONObject: event, options: .prettyPrinted)
+                let data = try JSONSerialization.data(
+                    withJSONObject: ylsEvent.fetchDictionary(),
+                    options: .prettyPrinted
+                )
                 request.httpBody = data
 
                 // 테스트용 코드
@@ -61,7 +65,7 @@ public final class YLS {
 //                if let urlResponse = response as? HTTPURLResponse {
 //                    switch urlResponse.statusCode {
 //                    case 200..<300:
-//                        logger.info("YLS success to log event - \(String(describing: event))")
+//                        logger.info("YLS success to log event - \(String(describing: ylsEvent))")
 //                        logger.info("YLS log data - \(data)")
 //                    default:
 //                        logger.warning("YLS fail to logging - \(urlResponse.statusCode)")
