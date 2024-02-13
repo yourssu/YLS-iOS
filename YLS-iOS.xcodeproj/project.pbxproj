@@ -12,7 +12,7 @@
 		B9278A622B680E7B00848F9B /* YLS_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9278A612B680E7B00848F9B /* YLS_iOSTests.swift */; };
 		B9278A632B680E7B00848F9B /* YLS_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B9278A552B680E7A00848F9B /* YLS_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B9278A6D2B68112200848F9B /* YLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9278A6C2B68112200848F9B /* YLS.swift */; };
-		B9278A702B68113B00848F9B /* YLSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9278A6F2B68113B00848F9B /* YLSEvent.swift */; };
+		B9278A902B6FECDF00848F9B /* YLSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9278A8F2B6FECDF00848F9B /* YLSEvent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,8 +32,8 @@
 		B9278A5C2B680E7B00848F9B /* YLS-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "YLS-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9278A612B680E7B00848F9B /* YLS_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLS_iOSTests.swift; sourceTree = "<group>"; };
 		B9278A6C2B68112200848F9B /* YLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLS.swift; sourceTree = "<group>"; };
-		B9278A6F2B68113B00848F9B /* YLSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLSEvent.swift; sourceTree = "<group>"; };
 		B9278A722B68121C00848F9B /* YLS-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "YLS-iOS.xcodeproj"; sourceTree = "<group>"; };
+		B9278A8F2B6FECDF00848F9B /* YLSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YLSEvent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +79,7 @@
 			children = (
 				B9278A552B680E7A00848F9B /* YLS_iOS.h */,
 				B9278A562B680E7A00848F9B /* YLS_iOS.docc */,
-				B9278A6E2B68112700848F9B /* Models */,
+				B9278A8E2B6FECD100848F9B /* Models */,
 				B9278A6C2B68112200848F9B /* YLS.swift */,
 			);
 			path = "YLS-iOS";
@@ -93,14 +93,6 @@
 			path = "YLS-iOSTests";
 			sourceTree = "<group>";
 		};
-		B9278A6E2B68112700848F9B /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				B9278A6F2B68113B00848F9B /* YLSEvent.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		B9278A712B68121C00848F9B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +104,14 @@
 		B9278A732B68121C00848F9B /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B9278A8E2B6FECD100848F9B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B9278A8F2B6FECDF00848F9B /* YLSEvent.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,7 +231,7 @@
 			files = (
 				B9278A6D2B68112200848F9B /* YLS.swift in Sources */,
 				B9278A572B680E7A00848F9B /* YLS_iOS.docc in Sources */,
-				B9278A702B68113B00848F9B /* YLSEvent.swift in Sources */,
+				B9278A902B6FECDF00848F9B /* YLSEvent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
