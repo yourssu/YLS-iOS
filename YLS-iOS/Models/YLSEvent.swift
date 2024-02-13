@@ -3,7 +3,6 @@
 //  YLS-iOS
 //
 //  Created by 정지혁 on 2/5/24.
-//
 
 import Foundation
 
