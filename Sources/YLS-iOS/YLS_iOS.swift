@@ -1,6 +1,7 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+import CryptoKit
 import Foundation
 import OSLog
 
@@ -97,5 +98,13 @@ public final class YLS {
                 logger.error("YLS fail to logging - \(error)")
             }
         }
+    }
+
+    private func hashUserID(userID: String) -> String {
+        let data = userID.data(using: .utf8)!
+        let hashedData = SHA256.hash(data: data)
+        let hashedString = hashedData.compactMap { String(format: "%02x", $0) }.joined()
+        logger.info("YLS hashed userID from \(userID) to \(hashedString)")
+        return hashedString
     }
 }
