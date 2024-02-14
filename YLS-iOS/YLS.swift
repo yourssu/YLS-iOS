@@ -15,6 +15,7 @@ public final class YLS {
 
     private var url: URL?
     private var userID: String?
+    private var caches: [YLSEvent] = []
 
     private init() {}
 
@@ -33,33 +34,51 @@ public final class YLS {
     }
 
     public func logEvent(name: String, extra: [String: Any] = [:]) {
-        guard let url, let userID else {
-            logger.warning("YLS should init UserID and URL")
+        guard let userID else {
+            logger.warning("YLS should init UserID")
+            return
+        }
+
+        let timestamp = ISO8601DateFormatter().string(from: Date())
+
+        var event: [String: Any] = ["platform": "iOS", "name": name]
+        event = event.merging(extra) { (current, new) in new }
+
+        let ylsEvent = YLSEvent(userID: userID, timestamp: timestamp, event: event)
+        self.caches.append(ylsEvent)
+
+        if self.caches.count >= 10 {
+            flush()
+        }
+    }
+
+    public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
+        logEvent(name: "\(name)Viewed", extra: extra)
+    }
+
+    public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
+        logEvent(name: "\(name)Tapped", extra: extra)
+    }
+    
+    private func flush() {
+        guard let url, !self.caches.isEmpty else {
+            logger.warning("YLS should init URL")
             return
         }
 
         Task {
-            let timestamp = ISO8601DateFormatter().string(from: Date())
-
-            var event: [String: Any] = ["platform": "iOS", "name": name]
-            event = event.merging(extra) { (current, new) in new }
-
-            let ylsEvent = YLSEvent(userID: userID, timestamp: timestamp, event: event)
-
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                let data = try JSONSerialization.data(
-                    withJSONObject: ylsEvent.fetchDictionary(),
-                    options: .prettyPrinted
-                )
+                let events = self.caches.map { $0.fetchDictionary() }
+                self.caches = []
+                let data = try JSONSerialization.data(withJSONObject: events, options: .prettyPrinted)
                 request.httpBody = data
 
                 // 테스트용 코드
                 try await Task.sleep(nanoseconds: 1_000_000_000)
-                logger.info("YLS success to log event - \(String(describing: event))")
-                logger.info("YLS log data - \(data)")
+                logger.info("YLS success to log event - \(String(describing: events))")
 
 //                let (_, response) = try await URLSession.shared.data(for: request)
 //                if let urlResponse = response as? HTTPURLResponse {
@@ -77,13 +96,5 @@ public final class YLS {
                 logger.error("YLS fail to logging - \(error)")
             }
         }
-    }
-
-    public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
-        logEvent(name: "\(name)Viewed", extra: extra)
-    }
-
-    public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
-        logEvent(name: "\(name)Tapped", extra: extra)
     }
 }
