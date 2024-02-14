@@ -25,9 +25,10 @@ public final class YLS {
         self.url = url
     }
 
-    public func setUserID(of userID: String) {
+    public func setUserID(of userID: String?) {
         // 비로그인 처리 + 암호화 진행
         self.userID = userID
+        logger.info("YLS set userID of \(userID ?? "")")
     }
 
     public func logEvent(name: String, extra: [String: Any] = [:]) {
@@ -61,8 +62,10 @@ public final class YLS {
         logEvent(name: "User Leaved", extra: extra)
         flush()
     }
+}
 
-    private func flush() {
+private extension YLS {
+    func flush() {
         guard let url, !self.caches.isEmpty else {
             logger.warning("YLS should init URL")
             return
@@ -100,11 +103,16 @@ public final class YLS {
         }
     }
 
-    private func hashUserID(userID: String) -> String {
+    func hashUserID(userID: String) -> String {
         let data = userID.data(using: .utf8)!
         let hashedData = SHA256.hash(data: data)
         let hashedString = hashedData.compactMap { String(format: "%02x", $0) }.joined()
         logger.info("YLS hashed userID from \(userID) to \(hashedString)")
         return hashedString
+    }
+
+    func fetchRandomString(length: Int) -> String {
+        let base = "!\"#$"
+        return String((0..<length).map { _ in base.randomElement()! })
     }
 }
