@@ -59,7 +59,12 @@ public final class YLS {
     public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
         logEvent(name: "\(name)Tapped", extra: extra)
     }
-    
+
+    public func logLeaveEvent(extra: [String: Any] = [:]) {
+        logEvent(name: "User Leaved", extra: extra)
+        flush()
+    }
+
     private func flush() {
         guard let url, !self.caches.isEmpty else {
             logger.warning("YLS should init URL")
