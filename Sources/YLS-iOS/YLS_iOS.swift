@@ -1,9 +1,5 @@
-//
-//  YLS.swift
-//  YLS-iOS
-//
-//  Created by 정지혁 on 1/30/24.
-//
+// The Swift Programming Language
+// https://docs.swift.org/swift-book
 
 import Foundation
 import OSLog
