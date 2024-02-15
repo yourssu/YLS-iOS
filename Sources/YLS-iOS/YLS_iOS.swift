@@ -11,7 +11,7 @@ public final class YLS {
     public static let shared = YLS()
 
     private var url: URL?
-    private var userID: String?
+    private var hashedUserID: String?
     private var caches: [YLSEvent] = []
 
     private init() {}
@@ -26,13 +26,16 @@ public final class YLS {
     }
 
     public func setUserID(of userID: String?) {
-        // 비로그인 처리 + 암호화 진행
-        self.userID = userID
-        logger.info("YLS set userID of \(userID ?? "")")
+        if let userID {
+            self.hashedUserID = hashUserID(userID: userID)
+        } else {
+            self.hashedUserID = hashUserID(userID: fetchRandomString(length: 10))
+        }
+        logger.info("YLS set hashUserID of \(self.hashedUserID ?? "")")
     }
 
     public func logEvent(name: String, extra: [String: Any] = [:]) {
-        guard let userID else {
+        guard let hashedUserID else {
             logger.warning("YLS should init UserID")
             return
         }
@@ -42,7 +45,7 @@ public final class YLS {
         var event: [String: Any] = ["platform": "iOS", "name": name]
         event = event.merging(extra) { (current, new) in new }
 
-        let ylsEvent = YLSEvent(userID: userID, timestamp: timestamp, event: event)
+        let ylsEvent = YLSEvent(userID: hashedUserID, timestamp: timestamp, event: event)
         self.caches.append(ylsEvent)
 
         if self.caches.count >= 10 {
@@ -64,7 +67,7 @@ public final class YLS {
     }
 }
 
-private extension YLS {
+extension YLS {
     func flush() {
         guard let url, !self.caches.isEmpty else {
             logger.warning("YLS should init URL")
@@ -112,7 +115,7 @@ private extension YLS {
     }
 
     func fetchRandomString(length: Int) -> String {
-        let base = "!\"#$"
+        let base = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
         return String((0..<length).map { _ in base.randomElement()! })
     }
 }
