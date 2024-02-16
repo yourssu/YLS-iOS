@@ -16,6 +16,8 @@ public final class YLS {
 
     private init() {}
 
+    /// YLS를 초기화하는 함수입니다.
+    /// - Parameter urlString: 해당하는 서비스의 로깅 시스템 URL 문자열
     public func initialize(from urlString: String) {
         guard let url = URL(string: urlString) else {
             logger.error("Failure YLS init by - \(urlString)")
@@ -25,6 +27,8 @@ public final class YLS {
         self.url = url
     }
 
+    /// YLS에서 사용할 UserID를 설정하는 함수입니다.
+    /// - Parameter userID: 로그인된 사용자일 경우에는 UserID, 아닐 경우 nil
     public func setUserID(of userID: String?) {
         if let userID {
             self.hashedUserID = hashUserID(userID: userID)
@@ -34,6 +38,10 @@ public final class YLS {
         logger.info("YLS set hashUserID of \(self.hashedUserID ?? "")")
     }
 
+    /// <#Description#>
+    /// - Parameters:
+    ///   - name: <#name description#>
+    ///   - extra: <#extra description#>
     public func logEvent(name: String, extra: [String: Any] = [:]) {
         guard let hashedUserID else {
             logger.warning("YLS should init UserID")
@@ -53,14 +61,24 @@ public final class YLS {
         }
     }
 
+    /// <#Description#>
+    /// - Parameters:
+    ///   - name: <#name description#>
+    ///   - extra: <#extra description#>
     public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
         logEvent(name: "\(name)Viewed", extra: extra)
     }
 
+    /// <#Description#>
+    /// - Parameters:
+    ///   - name: <#name description#>
+    ///   - extra: <#extra description#>
     public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
         logEvent(name: "\(name)Tapped", extra: extra)
     }
 
+    /// <#Description#>
+    /// - Parameter extra: <#extra description#>
     public func logLeaveEvent(extra: [String: Any] = [:]) {
         logEvent(name: "User Leaved", extra: extra)
         flush()
