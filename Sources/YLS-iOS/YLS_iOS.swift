@@ -16,8 +16,25 @@ public final class YLS {
 
     private init() {}
 
-    /// YLS를 초기화하는 함수입니다.
-    /// - Parameter urlString: 해당하는 서비스의 로깅 시스템 URL 문자열
+    /**
+     YLS를 초기화하는 함수입니다.
+     
+     앱 초기화 시에 로깅 시스템에 해당하는 URL을 설정하는 함수입니다.
+     SwiftUI의 경우, App 내부 init() 함수에서
+     ```
+     init() {
+        YLS.shared.initialize(from: "https://www.example.com/"
+     }
+     ```
+     UIKit의 경우, AppDelegate 내부 application() 함수에서
+     ```
+     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: ...) -> Bool {
+        YLS.shared.initialize(from: "https://www.example.com/"
+     }
+     ```
+     초기화 함수를 호출해주세요
+     - Parameter urlString: URL 문자열
+     */
     public func initialize(from urlString: String) {
         guard let url = URL(string: urlString) else {
             logger.error("Failure YLS init by - \(urlString)")
@@ -27,8 +44,16 @@ public final class YLS {
         self.url = url
     }
 
-    /// YLS에서 사용할 UserID를 설정하는 함수입니다.
-    /// - Parameter userID: 로그인된 사용자일 경우에는 UserID, 아닐 경우 nil
+    /**
+     YLS에서 사용할 UserID를 설정하는 함수입니다.
+     
+     UserID가 확인되는 시점에 호출해주세요.
+     로그인이 안된 사용자의 경우, nil을 넘겨주시면 됩니다.
+     ```
+     YLS.shared.setUserID(of: userID)
+     ```
+     - Parameter userID: 로그인된 사용자일 경우에는 UserID, 아닐 경우 nil
+     */
     public func setUserID(of userID: String?) {
         if let userID {
             self.hashedUserID = hashUserID(userID: userID)
@@ -38,10 +63,15 @@ public final class YLS {
         logger.info("YLS set hashUserID of \(self.hashedUserID ?? "")")
     }
 
-    /// <#Description#>
-    /// - Parameters:
-    ///   - name: <#name description#>
-    ///   - extra: <#extra description#>
+    /**
+     기본적인 이벤트 로그를 남기는 함수입니다.
+     
+     화면이나 버튼이 아닌 다른 이벤트의 로그를 남기고 싶을 때 사용하는 함수입니다.
+     name에 들어간 이벤트 이름이 그대로 서버에 저장됩니다.
+     - Parameters:
+        - name: 이벤트 이름
+        - extra: 추가적인 정보
+     */
     public func logEvent(name: String, extra: [String: Any] = [:]) {
         guard let hashedUserID else {
             logger.warning("YLS should init UserID")
@@ -61,24 +91,54 @@ public final class YLS {
         }
     }
 
-    /// <#Description#>
-    /// - Parameters:
-    ///   - name: <#name description#>
-    ///   - extra: <#extra description#>
+    /**
+     화면 이벤트 로그를 남기는 함수입니다.
+     
+     현재 화면을 사용자가 보았다는 로그를 남기는 함수입니다.
+     SwiftUI의 경우, ViewModifier의 .onAppear()에서,
+     ```
+     .onAppear {
+         YLS.shared.logScreenEvent(screenName: "ContentView")
+     }
+     ```
+     UIkit의 경우, viewDidAppear()에서
+     ```
+     ```
+     호출하는 것을 의도했습니다.
+     - Parameters:
+        - name: 화면 이름
+        - extra: 추가적인 정보
+     */
     public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
         logEvent(name: "\(name)Viewed", extra: extra)
     }
 
-    /// <#Description#>
-    /// - Parameters:
-    ///   - name: <#name description#>
-    ///   - extra: <#extra description#>
+    /**
+     버튼 터치 이벤트 로그를 남기는 함수입니다.
+     
+     사용자가 버튼을 눌렀다는 로그를 남기는 함수입니다.
+     SwiftUI, UIkit 모두 버튼의 터치 이벤트 내부에서 호출하는 것을 의도했습니다.
+     - Parameters:
+        - name: 버튼 이름
+        - extra: 추가적인 정보
+     */
     public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
         logEvent(name: "\(name)Tapped", extra: extra)
     }
 
-    /// <#Description#>
-    /// - Parameter extra: <#extra description#>
+    /**
+     사용자 이탈 로그를 남기는 함수입니다.
+     
+     사용자가 앱을 종료하거나 기타 의도된 이탈의 로그를 남기는 함수입니다.
+     앱을 종료할 때는, AppDelegate 내부의 applicationWillTerminate()에서 호출하는 것을 의도했습니다.
+     ```
+     func applicationWillTerminate(_ application: UIApplication) {
+        YLS.shared.logLeaveEvent()
+        sleep(2)
+     }
+     ```
+     - Parameter extra: 추가적인 정보
+     */
     public func logLeaveEvent(extra: [String: Any] = [:]) {
         logEvent(name: "User Leaved", extra: extra)
         flush()
