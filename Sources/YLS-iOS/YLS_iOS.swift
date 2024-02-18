@@ -165,7 +165,7 @@ public final class YLS {
      ```
      호출하는 것을 의도했습니다.
      - Parameters:
-        - screenName: 화면 이름
+        - name: 화면 이름
         - extra: 추가적인 정보
      */
     public func logScreenExitEvent(screenName name: String, extra: [String: Any] = [:]) {
