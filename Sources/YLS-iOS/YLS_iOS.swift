@@ -109,6 +109,27 @@ public final class YLS {
     }
 
     /**
+     
+     */
+    public func logActiveEvent(extra: [String: Any] = [:]) {
+        logEvent(eventName: "InitialEntry", extra: extra)
+    }
+
+    /**
+     앱에 딥링크를 통해 진입했을 경우 로그를 남기는 함수입니다.
+     
+     딥링크를 통해 이동하는 화면 이름까지 기록하기 위해, logAppInitEvent() 함수와 다르게 화면 이름을 파라미터로 가지고 있습니다.
+     - Parameters:
+        - name: 이동할 화면 이름
+        - extra: 추가적인 정보
+     */
+    public func logDeepLinkEvent(screenName name: String, extra: [String: Any] = [:]) {
+        var event: [String: Any] = ["screen": name]
+        event = event.merging(extra) { (current, new) in new }
+        logEvent(eventName: "DeepLinkEntry", extra: event)
+    }
+
+    /**
      화면 이벤트 로그를 남기는 함수입니다.
      
      현재 화면을 사용자가 보았다는 로그를 남기는 함수입니다.
