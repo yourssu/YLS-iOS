@@ -8,11 +8,11 @@
 import Foundation
 
 struct YLSEvent {
-    let userID: String
+    let hashedID: String
     let timestamp: String
     let event: [String: Any]
 
     func fetchDictionary() -> [String: Any] {
-        return ["user": userID, "timestamp": timestamp, "event": event]
+        return ["hashedID": hashedID, "timestamp": timestamp, "event": event]
     }
 }

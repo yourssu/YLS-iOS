@@ -11,7 +11,7 @@ public final class YLS {
     public static let shared = YLS()
 
     private var url: URL?
-    private var hashedUserID: String?
+    private var hashedID: String?
     private var caches: [YLSEvent] = []
 
     private init() {}
@@ -56,11 +56,11 @@ public final class YLS {
      */
     public func setUserID(of userID: String?) {
         if let userID {
-            self.hashedUserID = hashUserID(userID: userID)
+            self.hashedID = hashUserID(userID: userID)
         } else {
-            self.hashedUserID = hashUserID(userID: fetchRandomString(length: 10))
+            self.hashedID = hashUserID(userID: fetchRandomString(length: 10))
         }
-        logger.info("YLS set hashUserID of \(self.hashedUserID ?? "")")
+        logger.info("YLS set hashUserID of \(self.hashedID ?? "")")
     }
 
     /**
@@ -72,23 +72,40 @@ public final class YLS {
         - name: 이벤트 이름
         - extra: 추가적인 정보
      */
-    public func logEvent(name: String, extra: [String: Any] = [:]) {
-        guard let hashedUserID else {
+    public func logEvent(eventName name: String, extra: [String: Any] = [:]) {
+        guard let hashedID else {
             logger.warning("YLS should init UserID")
             return
         }
 
         let timestamp = ISO8601DateFormatter().string(from: Date())
 
-        var event: [String: Any] = ["platform": "iOS", "name": name]
+        var event: [String: Any] = ["platform": "iOS", "event": name]
         event = event.merging(extra) { (current, new) in new }
 
-        let ylsEvent = YLSEvent(userID: hashedUserID, timestamp: timestamp, event: event)
+        let ylsEvent = YLSEvent(hashedID: hashedID, timestamp: timestamp, event: event)
         self.caches.append(ylsEvent)
 
         if self.caches.count >= 10 {
             flush()
         }
+    }
+
+    /**
+     앱에 최초 진입 로그를 남기는 함수입니다.
+     
+     사용자가 앱을 켰다는 로그를 남기기 위해,
+     SwiftUI의 경우, App 내 init() 함수에서,
+     ```
+     ```
+     UIKit의 경우, AppDelegate 내부 application() 함수에서
+     ```
+     ```
+     호출하는 것을 의도했습니다.
+     - Parameter extra: 추가적인 정보
+     */
+    public func logAppInitEvent(extra: [String: Any] = [:]) {
+        logEvent(eventName: "AppInitialEntry", extra: extra)
     }
 
     /**
@@ -110,7 +127,30 @@ public final class YLS {
         - extra: 추가적인 정보
      */
     public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
-        logEvent(name: "\(name)Viewed", extra: extra)
+        var event: [String: Any] = ["screen": name]
+        event = event.merging(extra) { (current, new) in new }
+        logEvent(eventName: "ScreenEntry", extra: event)
+    }
+
+    /**
+     화면에서 이탈하는 로그를 남기는 함수입니다.
+     
+     현재 화면에서 사용자가 이탈했다는 로그를 남기는 함수입니다.
+     SwiftUI의 경우, ViewModifier의 .onDisappear()에서,
+     ```
+     ```
+     UIKit의 경우, viewDidDisappear()에서
+     ```
+     ```
+     호출하는 것을 의도했습니다.
+     - Parameters:
+        - screenName: 화면 이름
+        - extra: 추가적인 정보
+     */
+    public func logScreenExitEvent(screenName name: String, extra: [String: Any] = [:]) {
+        var event: [String: Any] = ["screen": name]
+        event = event.merging(extra) { (current, new) in new }
+        logEvent(eventName: "ScreenExit", extra: event)
     }
 
     /**
@@ -119,29 +159,14 @@ public final class YLS {
      사용자가 버튼을 눌렀다는 로그를 남기는 함수입니다.
      SwiftUI, UIkit 모두 버튼의 터치 이벤트 내부에서 호출하는 것을 의도했습니다.
      - Parameters:
-        - name: 버튼 이름
+        - screenName: 화면 이름
+        - buttonName: 버튼 이름
         - extra: 추가적인 정보
      */
-    public func logTapEvent(buttonName name: String, extra: [String: Any] = [:]) {
-        logEvent(name: "\(name)Tapped", extra: extra)
-    }
-
-    /**
-     사용자 이탈 로그를 남기는 함수입니다.
-     
-     사용자가 앱을 종료하거나 기타 의도된 이탈의 로그를 남기는 함수입니다.
-     앱을 종료할 때는, AppDelegate 내부의 applicationWillTerminate()에서 호출하는 것을 의도했습니다.
-     ```
-     func applicationWillTerminate(_ application: UIApplication) {
-        YLS.shared.logLeaveEvent()
-        sleep(2)
-     }
-     ```
-     - Parameter extra: 추가적인 정보
-     */
-    public func logLeaveEvent(extra: [String: Any] = [:]) {
-        logEvent(name: "User Leaved", extra: extra)
-        flush()
+    public func logTapEvent(screenName: String, buttonName: String, extra: [String: Any] = [:]) {
+        var event: [String: Any] = ["screen": screenName]
+        event = event.merging(extra) { (current, new) in new }
+        logEvent(eventName: "\(buttonName)Clicked", extra: event)
     }
 }
 
