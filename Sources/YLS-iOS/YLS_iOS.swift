@@ -222,22 +222,18 @@ extension YLS {
                 let data = try JSONSerialization.data(withJSONObject: events, options: .prettyPrinted)
                 request.httpBody = data
 
-                // 테스트용 코드
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                logger.info("YLS success to log event - \(String(describing: events))")
-
-//                let (_, response) = try await URLSession.shared.data(for: request)
-//                if let urlResponse = response as? HTTPURLResponse {
-//                    switch urlResponse.statusCode {
-//                    case 200..<300:
-//                        logger.info("YLS success to log event - \(String(describing: ylsEvent))")
-//                        logger.info("YLS log data - \(data)")
-//                    default:
-//                        logger.warning("YLS fail to logging - \(urlResponse.statusCode)")
-//                    }
-//                } else {
-//                    logger.warning("YLS fail to logging")
-//                }
+                let (_, response) = try await URLSession.shared.data(for: request)
+                if let urlResponse = response as? HTTPURLResponse {
+                    switch urlResponse.statusCode {
+                    case 200..<300:
+                        logger.info("YLS success to log event - \(String(describing: events))")
+                        logger.info("YLS log data - \(data)")
+                    default:
+                        logger.warning("YLS fail to logging - \(urlResponse.statusCode)")
+                    }
+                } else {
+                    logger.warning("YLS fail to logging")
+                }
             } catch {
                 logger.error("YLS fail to logging - \(error)")
             }
