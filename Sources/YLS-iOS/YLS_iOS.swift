@@ -109,6 +109,20 @@ public final class YLS {
     }
 
     /**
+     사용자가 앱을 종료하거나 기타 의도된 이탈의 로그를 남기는 함수입니다.
+     앱을 종료할 때는, AppDelegate 내부의 applicationWillTerminate()에서 호출하는 것을 의도했습니다.
+     ```
+     func applicationWillTerminate(_ application: UIApplication) {
+        YLS.shared.logLeaveEvent()
+        sleep(2)
+     }
+     ```
+     */
+    public func logAppTerminateEvent(extra: [String: Any] = [:]) {
+        flush()
+    }
+
+    /**
      
      */
     public func logActiveEvent(extra: [String: Any] = [:]) {
