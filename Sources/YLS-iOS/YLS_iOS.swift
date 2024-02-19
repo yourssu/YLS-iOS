@@ -23,13 +23,13 @@ public final class YLS {
      SwiftUI의 경우, App 내부 init() 함수에서
      ```
      init() {
-        YLS.shared.initialize(from: "https://www.example.com/"
+        YLS.shared.initialize(from: "https://www.example.com/")
      }
      ```
      UIKit의 경우, AppDelegate 내부 application() 함수에서
      ```
      func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: ...) -> Bool {
-        YLS.shared.initialize(from: "https://www.example.com/"
+        YLS.shared.initialize(from: "https://www.example.com/")
      }
      ```
      초기화 함수를 호출해주세요
@@ -97,9 +97,15 @@ public final class YLS {
      사용자가 앱을 켰다는 로그를 남기기 위해,
      SwiftUI의 경우, App 내 init() 함수에서,
      ```
+     init() {
+        YLS.shared.logAppInitEvent()
+     }
      ```
      UIKit의 경우, AppDelegate 내부 application() 함수에서
      ```
+     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: ...) -> Bool {
+        YLS.shared.logAppInitEvent()
+     }
      ```
      호출하는 것을 의도했습니다.
      - Parameter extra: 추가적인 정보
@@ -110,6 +116,7 @@ public final class YLS {
 
     /**
      사용자가 앱을 종료하거나 기타 의도된 이탈의 로그를 남기는 함수입니다.
+     
      앱을 종료할 때는, AppDelegate 내부의 applicationWillTerminate()에서 호출하는 것을 의도했습니다.
      ```
      func applicationWillTerminate(_ application: UIApplication) {
@@ -123,7 +130,7 @@ public final class YLS {
     }
 
     /**
-     
+     앱이 Background에서 다시 Active 상태가 되는 로그를 남기는 함수입니다.
      */
     public func logActiveEvent(extra: [String: Any] = [:]) {
         logEvent(eventName: "InitialEntry", extra: extra)
@@ -155,6 +162,9 @@ public final class YLS {
      ```
      UIkit의 경우, viewDidAppear()에서
      ```
+     func viewDidAppear(...) {
+        YLS.shared.logScreenEvent(screenName: "ContentView")
+     }
      ```
      호출하는 것을 의도했습니다.
      - Parameters:
@@ -173,9 +183,15 @@ public final class YLS {
      현재 화면에서 사용자가 이탈했다는 로그를 남기는 함수입니다.
      SwiftUI의 경우, ViewModifier의 .onDisappear()에서,
      ```
+     .onDisappear {
+         YLS.shared.logScreenEvent(screenName: "ContentView")
+     }
      ```
      UIKit의 경우, viewDidDisappear()에서
      ```
+     func viewDidDisappear(...) {
+        YLS.shared.logScreenEvent(screenName: "ContentView")
+     }
      ```
      호출하는 것을 의도했습니다.
      - Parameters:
