@@ -217,7 +217,7 @@ extension YLS {
             request.httpMethod = "PUT"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                let events = self.caches.map { $0.fetchDictionary() }
+                let events = ["logRequestList": self.caches.map { $0.fetchDictionary() }]
                 self.caches = []
                 let data = try JSONSerialization.data(withJSONObject: events, options: .prettyPrinted)
                 request.httpBody = data
