@@ -214,7 +214,7 @@ extension YLS {
 
         Task {
             var request = URLRequest(url: url)
-            request.httpMethod = "POST"
+            request.httpMethod = "PUT"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
                 let events = self.caches.map { $0.fetchDictionary() }
