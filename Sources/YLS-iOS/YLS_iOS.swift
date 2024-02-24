@@ -156,6 +156,7 @@ public final class YLS {
      화면 이벤트 로그를 남기는 함수입니다.
      
      현재 화면을 사용자가 보았다는 로그를 남기는 함수입니다.
+     CententView와 같은 화면 이름만 넘길 경우, 로깅 시스템에 맞게 수정해서 로그를 남깁니다.
      SwiftUI의 경우, ViewModifier의 .onAppear()에서,
      ```
      .onAppear {
@@ -210,6 +211,7 @@ public final class YLS {
      버튼 터치 이벤트 로그를 남기는 함수입니다.
      
      사용자가 버튼을 눌렀다는 로그를 남기는 함수입니다.
+     버튼 이름만 파라미터에 넣으면, 로깅 시스템에 맞게 수정해서 로그를 남깁니다.
      SwiftUI, UIkit 모두 버튼의 터치 이벤트 내부에서 호출하는 것을 의도했습니다.
      - Parameters:
         - screenName: 화면 이름
