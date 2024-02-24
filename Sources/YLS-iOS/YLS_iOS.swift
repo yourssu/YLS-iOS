@@ -10,6 +10,8 @@ let logger = Logger(subsystem: "YLS", category: "Logging")
 public final class YLS {
     public static let shared = YLS()
 
+    private let version = 1
+
     private var url: URL?
     private var hashedID: String?
     private var caches: [YLSEvent] = []
@@ -83,7 +85,7 @@ public final class YLS {
         var event: [String: Any] = ["platform": "iOS", "event": name]
         event = event.merging(extra) { (current, new) in new }
 
-        let ylsEvent = YLSEvent(hashedID: hashedID, timestamp: timestamp, event: event)
+        let ylsEvent = YLSEvent(hashedID: hashedID, timestamp: timestamp, version: version, event: event)
         self.caches.append(ylsEvent)
 
         if self.caches.count >= 10 {

@@ -10,9 +10,10 @@ import Foundation
 struct YLSEvent {
     let hashedID: String
     let timestamp: String
+    let version: Int
     let event: [String: Any]
 
     func fetchDictionary() -> [String: Any] {
-        return ["hashedID": hashedID, "timestamp": timestamp, "event": event]
+        return ["hashedID": hashedID, "timestamp": timestamp, "version": version, "event": event]
     }
 }
