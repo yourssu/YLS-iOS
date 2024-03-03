@@ -10,8 +10,6 @@ let logger = Logger(subsystem: "YLS", category: "Logging")
 public final class YLS {
     public static let shared = YLS()
 
-    private let version = 1
-
     private var url: URL?
     private var hashedID: String?
     private var caches: [YLSEvent] = []
@@ -72,9 +70,14 @@ public final class YLS {
      name에 들어간 이벤트 이름이 그대로 서버에 저장됩니다.
      - Parameters:
         - name: 이벤트 이름
+        - version: 로깅 버전
         - extra: 추가적인 정보
      */
-    public func logEvent(eventName name: String, extra: [String: Any] = [:]) {
+    public func logEvent(
+        eventName name: String,
+        version: Int,
+        extra: [String: Any] = [:]
+    ) {
         guard let hashedID else {
             logger.warning("YLS should init UserID")
             return
@@ -82,7 +85,7 @@ public final class YLS {
 
         let timestamp = ISO8601DateFormatter().string(from: Date())
 
-        var event: [String: Any] = ["platform": "iOS", "event": name]
+        var event: [String: Any] = ["platform": "iOS", "name": name]
         event = event.merging(extra) { (current, new) in new }
 
         let ylsEvent = YLSEvent(hashedID: hashedID, timestamp: timestamp, version: version, event: event)
@@ -110,10 +113,12 @@ public final class YLS {
      }
      ```
      호출하는 것을 의도했습니다.
-     - Parameter extra: 추가적인 정보
+     - Parameters:
+        - version: 로깅 버전
+        - extra: 추가적인 정보
      */
-    public func logAppInitEvent(extra: [String: Any] = [:]) {
-        logEvent(eventName: "AppInitialEntry", extra: extra)
+    public func logAppInitEvent(version: Int, extra: [String: Any] = [:]) {
+        logEvent(eventName: "AppInitialEntry", version: version, extra: extra)
     }
 
     /**
@@ -133,9 +138,12 @@ public final class YLS {
 
     /**
      앱이 Background에서 다시 Active 상태가 되는 로그를 남기는 함수입니다.
+     - Parameters:
+        - version: 로깅 버전
+        - extra: 추가적인 정보
      */
-    public func logActiveEvent(extra: [String: Any] = [:]) {
-        logEvent(eventName: "InitialEntry", extra: extra)
+    public func logActiveEvent(version: Int, extra: [String: Any] = [:]) {
+        logEvent(eventName: "InitialEntry", version: version, extra: extra)
     }
 
     /**
@@ -144,12 +152,17 @@ public final class YLS {
      딥링크를 통해 이동하는 화면 이름까지 기록하기 위해, logAppInitEvent() 함수와 다르게 화면 이름을 파라미터로 가지고 있습니다.
      - Parameters:
         - name: 이동할 화면 이름
+        - version: 로깅 버전
         - extra: 추가적인 정보
      */
-    public func logDeepLinkEvent(screenName name: String, extra: [String: Any] = [:]) {
+    public func logDeepLinkEvent(
+        screenName name: String,
+        version: Int,
+        extra: [String: Any] = [:]
+    ) {
         var event: [String: Any] = ["screen": name]
         event = event.merging(extra) { (current, new) in new }
-        logEvent(eventName: "DeepLinkEntry", extra: event)
+        logEvent(eventName: "DeepLinkEntry", version: version, extra: event)
     }
 
     /**
@@ -172,12 +185,17 @@ public final class YLS {
      호출하는 것을 의도했습니다.
      - Parameters:
         - name: 화면 이름
+        - version: 로깅 버전
         - extra: 추가적인 정보
      */
-    public func logScreenEvent(screenName name: String, extra: [String: Any] = [:]) {
+    public func logScreenEvent(
+        screenName name: String,
+        version: Int,
+        extra: [String: Any] = [:]
+    ) {
         var event: [String: Any] = ["screen": name]
         event = event.merging(extra) { (current, new) in new }
-        logEvent(eventName: "ScreenEntry", extra: event)
+        logEvent(eventName: "ScreenEntry", version: version, extra: event)
     }
 
     /**
@@ -199,12 +217,17 @@ public final class YLS {
      호출하는 것을 의도했습니다.
      - Parameters:
         - name: 화면 이름
+        - version: 로깅 버전
         - extra: 추가적인 정보
      */
-    public func logScreenExitEvent(screenName name: String, extra: [String: Any] = [:]) {
+    public func logScreenExitEvent(
+        screenName name: String,
+        version: Int,
+        extra: [String: Any] = [:]
+    ) {
         var event: [String: Any] = ["screen": name]
         event = event.merging(extra) { (current, new) in new }
-        logEvent(eventName: "ScreenExit", extra: event)
+        logEvent(eventName: "ScreenExit", version: version, extra: event)
     }
 
     /**
@@ -216,12 +239,18 @@ public final class YLS {
      - Parameters:
         - screenName: 화면 이름
         - buttonName: 버튼 이름
+        - version: 로깅 버전
         - extra: 추가적인 정보
      */
-    public func logTapEvent(screenName: String, buttonName: String, extra: [String: Any] = [:]) {
+    public func logTapEvent(
+        screenName: String,
+        buttonName: String,
+        version: Int,
+        extra: [String: Any] = [:]
+    ) {
         var event: [String: Any] = ["screen": screenName]
         event = event.merging(extra) { (current, new) in new }
-        logEvent(eventName: "\(buttonName)Clicked", extra: event)
+        logEvent(eventName: "\(buttonName)Clicked", version: version, extra: event)
     }
 }
 
